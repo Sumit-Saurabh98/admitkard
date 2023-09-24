@@ -12,6 +12,8 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Card,
+  CardContent,
   Input,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -28,45 +30,61 @@ function Homepage() {
   const [topWords, setTopWords] = useState([]);
   const [wordCount, setWordCount] = useState([]);
   const [searchWord, setSearchWord] = useState("");
+  const [searchResult, setSearchResult] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("")
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   };
 
   const handleSubmission = () => {
-    if (!selectedFile) {
-      console.log("Please select a file.");
-      return;
-    }
+  if (!selectedFile) {
+    setErrorMessage("Please select a file.");
+    return;
+  }
 
-    const formData = new FormData();
-    formData.append("file", selectedFile);
+  // Check file type
+  if (selectedFile.type !== "text/plain") {
+    setErrorMessage("File type should be .txt");
+    return;
+  }
 
-    axios
-      .post("http://localhost:8080/api/upload", formData)
-      .then((response) => {
-        const data = response.data;
-        console.log(data);
-        setTopCoOccurrences(data.topCoOccurrences);
-        setTopWords(data.topWords);
-        setWordCount(data.wordCount);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
+  // Check file size (5MB limit)
+  if (selectedFile.size > 5 * 1024 * 1024) {
+    setErrorMessage("File size should be less than 5MB.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", selectedFile);
+
+  axios
+    .post("http://localhost:8080/api/upload", formData)
+    .then((response) => {
+      const data = response.data;
+      console.log(data);
+      setTopCoOccurrences(data.topCoOccurrences);
+      setTopWords(data.topWords);
+      setWordCount(data.wordCount);
+      setErrorMessage("")
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+};
+
 
   const handleSearch = async () => {
     try {
-      await fetch(
-        `http://localhost:8080/api/search/${searchWord}`
-      )
-      .then((response) => response.json())
-      .then(data => console.log(data, "i mam here"))
+      await fetch(`http://localhost:8080/api/search/${searchWord}`)
+        .then((response) => response.json())
+        .then((data) => setSearchResult(data));
     } catch (error) {
-    //   console.error("Error:", error);
+      //   console.error("Error:", error);
     }
   };
+
+  console.log(searchResult)
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -80,7 +98,6 @@ function Homepage() {
         </Toolbar>
       </AppBar>
       <main>
-        {/* Hero unit */}
         <Box
           sx={{
             bgcolor: "background.paper",
@@ -116,7 +133,7 @@ function Homepage() {
             id="file-input"
             type="file"
             onChange={handleFileChange}
-          />
+          />&nbsp; &nbsp; &nbsp;
           <Button
             onClick={handleSubmission}
             variant="contained"
@@ -124,26 +141,54 @@ function Homepage() {
           >
             Upload File
           </Button>
+          <Typography color={"red"}>
+            {errorMessage && errorMessage ? errorMessage :""}
+          </Typography>
         </Box>
-        <Box>
+        <Box mt="30px">
           <Input
             id="word-input"
             type="text"
+            placeholder="search word.."
             value={searchWord}
             onChange={(e) => setSearchWord(e.target.value)}
-          />
-          <Button onClick={handleSearch} variant="contained" component="span">
+          />&nbsp; &nbsp; &nbsp;
+          <Button onClick={handleSearch} variant="contained" component="span" >
             Search Word
           </Button>
         </Box>
 
-        <Container sx={{ py: 8 }} maxWidth="md">
-          <Typography>Top 5 mostly occurred words</Typography>
-
-          <TopWordCard topWords={topWords} />
+        <Container>
+           {
+            searchResult !== null ? <>
+             <Typography variant="h4" gutterBottom>Searched Result</Typography>
+            {
+               searchResult && searchResult.word ? <>
+                <Card
+                    sx={{
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <CardContent sx={{ flexGrow: 1 }}>
+                      <Typography gutterBottom variant="h5" component="h2">
+                        Word:- {searchResult.word}
+                      </Typography>
+                      <Typography>Frequency:- {searchResult.frequency}</Typography>
+                    </CardContent>
+                  </Card>
+                </> : "Word not found"
+            }
+            </>:""
+           }
         </Container>
         <Container sx={{ py: 8 }} maxWidth="md">
-          <Typography>
+          <Typography variant="h4" gutterBottom>Top 5 mostly occurred words</Typography>
+          <TopWordCard topWords={topWords} />
+        </Container>
+        <Container sx={{ pb: 8 }} maxWidth="md">
+          <Typography variant="h4" gutterBottom>
             Top 5 mostly co-occurred words ( adjacent words in pairs )
           </Typography>
           <TopCoOccurredCrd topCoOccurrences={topCoOccurrences} />
@@ -155,7 +200,7 @@ function Homepage() {
               aria-controls="panel2a-content"
               id="panel2a-header"
             >
-              <Typography>Frequency of each word</Typography>
+              <Typography variant="h4" gutterBottom>Frequency of each word</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography>
@@ -176,7 +221,7 @@ function Homepage() {
           color="text.secondary"
           component="p"
         >
-          Something here to give the footer a purpose!
+          @copyright sumitsaurabh
         </Typography>
       </Box>
       {/* End footer */}
