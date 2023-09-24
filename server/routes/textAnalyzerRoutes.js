@@ -35,21 +35,18 @@ router.get('/search/:word', async (req, res) => {
   }
 
   try {
-    // Retrieve the analyzed text from the database
     const analyzedText = await AnalyzedText.findOne();
 
     if (!analyzedText) {
       return res.status(404).json({ error: 'Analyzed text not found' });
     }
 
-    // Find the frequency of the specified word in the wordCount array
     const foundWord = analyzedText.wordCount.find((item) => item.word === word);
 
     if (!foundWord) {
       return res.status(404).json({ error: 'Word not found in analyzed text' });
     }
 
-    // Return the word and its frequency
     res.json({ word: foundWord.word, frequency: foundWord.frequency });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });

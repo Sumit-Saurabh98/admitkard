@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -32,6 +32,8 @@ function Homepage() {
   const [searchWord, setSearchWord] = useState("");
   const [searchResult, setSearchResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState("")
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [searching, setSearching] = useState(false)
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -57,34 +59,37 @@ function Homepage() {
 
   const formData = new FormData();
   formData.append("file", selectedFile);
-
+setUploadingFile(true)
   axios
-    .post("http://localhost:8080/api/upload", formData)
+    .post(`${process.env.REACT_APP_BASE_URL}/api/upload`, formData)
     .then((response) => {
       const data = response.data;
-      console.log(data);
       setTopCoOccurrences(data.topCoOccurrences);
       setTopWords(data.topWords);
       setWordCount(data.wordCount);
       setErrorMessage("")
+      setUploadingFile(false)
     })
     .catch((error) => {
-      console.error("Error:", error);
+      // console.error("Error:", error); 
+      setUploadingFile(false)
     });
 };
 
 
   const handleSearch = async () => {
     try {
-      await fetch(`http://localhost:8080/api/search/${searchWord}`)
+      setSearching(true);
+      await fetch(`${process.env.REACT_APP_BASE_URL}/api/search/${searchWord}`)
         .then((response) => response.json())
         .then((data) => setSearchResult(data));
+        setSearching(false);
     } catch (error) {
-      //   console.error("Error:", error);
+        // console.error("Error:", error);
+        setSearching(false);
     }
   };
 
-  console.log(searchResult)
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -139,7 +144,7 @@ function Homepage() {
             variant="contained"
             component="span"
           >
-            Upload File
+            {uploadingFile ? "Upload..." : "Upload File"}
           </Button>
           <Typography color={"red"}>
             {errorMessage && errorMessage ? errorMessage :""}
@@ -154,7 +159,7 @@ function Homepage() {
             onChange={(e) => setSearchWord(e.target.value)}
           />&nbsp; &nbsp; &nbsp;
           <Button onClick={handleSearch} variant="contained" component="span" >
-            Search Word
+            {searching ? "Finding..." : "Find Word"}
           </Button>
         </Box>
 
