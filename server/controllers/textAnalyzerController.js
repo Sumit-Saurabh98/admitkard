@@ -11,10 +11,13 @@ async function analyzeAndSaveText(text) {
   // Extract the top 5 mostly co-occurred words and their frequencies
   const top5CoOccurrences = analysis.top5CoOccurrences.map(({ pair, frequency }) => ({ pair, frequency }));
 
+  // Convert the wordCount object into an array of objects
+  const wordCountArray = Object.entries(analysis.wordCount).map(([word, frequency]) => ({ word, frequency }));
+
   const analyzedText = new AnalyzedText({
     topWords: top5Words,
     topCoOccurrences: top5CoOccurrences,
-    wordCount: analysis.wordCount,
+    wordCount: wordCountArray,
   });
 
   return await analyzedText.save();
