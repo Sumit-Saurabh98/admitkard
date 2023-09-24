@@ -1,6 +1,6 @@
 # Text Analyzer App
 
-## Video Presntation
+## Video Presentation
 
 Drive Link:- https://drive.google.com/file/d/1wwbt0ubm9l--ZQs1xKRR4Hsr92_Kd_FV/view?usp=sharing
 
@@ -24,7 +24,31 @@ I have deployed the frontend and Backend. you can use the app by this link. <br/
 --> Step 5:- Step up the environment variable (REACT_APP_BASE_URL)<br/>
     i. Create a .env file inside the client directory.<br/>
     ii. in .env file, create a variable REACT_APP_BASE_URL = http://localhost:8080<br/>
---> Step 6:- run the "npm start" command without double quotes.
+--> Step 6:- run the "npm start" command without double quotes.<br/>
+
+## Tech stack used:-
+1. React.js<br/>
+2. Node.js<br/>
+3. Express.js<br/>
+4. MongoDB<br/>
+5. Material UI<br/>
+6. React Icon
+
+
+
+
+
+
+
+
+## screenshot
+
+<img width="1440" alt="Screenshot 2023-09-24 at 3 35 19 PM" src="https://github.com/Sumit-Saurabh98/admitkard/assets/105351295/c3952cef-13ea-4f0d-ab9c-ff1ba3ee3709">
+
+<img width="1440" alt="Screenshot 2023-09-24 at 3 35 27 PM" src="https://github.com/Sumit-Saurabh98/admitkard/assets/105351295/f3f1d329-042d-4c76-9c34-90acc18928bf">
+
+<img width="1440" alt="Screenshot 2023-09-24 at 3 35 34 PM" src="https://github.com/Sumit-Saurabh98/admitkard/assets/105351295/9fd6d4f2-ea65-449a-87c9-f3455776b50f">
+
 
 
 
