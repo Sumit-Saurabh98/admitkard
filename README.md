@@ -11,7 +11,7 @@ I have deployed the frontend and Backend. you can use the app by this link. <br/
 
 ## Note:- The app is deployed on free hosting services. You might face a delay during an API call.
 
-### Deployed Link:- https://textanalyzer-phi.vercel.app/
+### Deployed Link:- https://admitkardfrontend.vercel.app/
 
 ## 2. How to Setup locally(required MongoDB cluster URL to connect to the database)
 
